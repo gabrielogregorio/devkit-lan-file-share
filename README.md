@@ -209,10 +209,10 @@ Five workflows, with every action pinned to a commit hash:
 | `tests.yml` | Push and PR to `main` | Lint, types, pytest, JUnit, the APK build, then the emulator E2E on KVM |
 | `check-quality.yml` | Push and PR to `main` | Ruff, mypy, ShellCheck, executable scripts, pinned actions, valid YAML, lock and requirements agreeing |
 | `codeql-analysis.yml` | Push, PR and weekly | Security analysis of Python, Java and the workflows |
-| `auto-complete-fields.yml` | PR to `main` | Refuses a released version, assigns, labels, lists the commits, sets the title |
-| `create-tag-and-release.yml` | PR merged into `main` | Creates the tag and the release, with checksums, see [docs/release.md](docs/release.md) |
+| `auto-complete-fields.yml` | PR to `main` | Validates a release branch, assigns, labels, lists the commits, sets the title |
+| `create-tag-and-release.yml` | PR of `release/X.Y.Z` merged into `main` | Creates the tag and the release, with checksums, see [docs/release.md](docs/release.md) |
 
-Work happens on `dev`, and a PR into `main` with `VERSION` bumped makes a release.
+Work happens on `dev`, and any PR into `main` merges without a new version. Only a `release/X.Y.Z` branch makes a release.
 
 ## Dependencies
 

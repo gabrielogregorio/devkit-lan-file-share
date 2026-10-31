@@ -25,7 +25,7 @@ jobs:
         run: .venv/bin/mypy server tray tray_icon.py tests conftest.py
 
       - name: ShellCheck
-        run: shellcheck --severity=warning ./*.sh android/*.sh e2e/*.sh
+        run: shellcheck --severity=warning ./*.sh android/*.sh e2e/*.sh .github/scripts/*.sh
 
       - name: Scripts are executable in git
         run: |

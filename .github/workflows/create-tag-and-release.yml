@@ -14,7 +14,11 @@ concurrency:
 
 jobs:
   create-release:
-    if: github.event.pull_request.merged == true
+    # A release comes only from a PR of a release/X.Y.Z branch of this repository. Any other merge publishes nothing.
+    if: >-
+      github.event.pull_request.merged == true
+      && startsWith(github.event.pull_request.head.ref, 'release/')
+      && github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 5
     runs-on: ubuntu-24.04
     steps:
@@ -27,14 +31,10 @@ jobs:
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
+          RELEASE_BRANCH: ${{ github.event.pull_request.head.ref }}
         run: |
-          VERSION=$(tr -d '[:space:]' < VERSION)
+          VERSION=$(.github/scripts/release-version.sh "$RELEASE_BRANCH")
           TAG="v$VERSION"
-          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" > /dev/null; then
-            echo "::warning::$TAG already exists: nothing to release (VERSION was not bumped)"
-            echo "SKIP=true" >> "$GITHUB_ENV"
-            exit 0
-          fi
           {
             echo "VERSION=$VERSION"
             echo "TAG_NAME=$TAG"
@@ -45,12 +45,10 @@ jobs:
           printf '%s\n\n%s\n' "${PR_TITLE#Release $TAG - }" "${PR_BODY//\[...autoGenerate\]/}" > release-notes.md
 
       - uses: ./.github/actions/setup-environment
-        if: env.SKIP != 'true'
         with:
           android: 'true'
 
       - name: build the source tarball
-        if: env.SKIP != 'true'
         run: |
           NAME="devkit-lan-file-share-$VERSION"
           mkdir -p dist
@@ -59,7 +57,6 @@ jobs:
       # Without the signing secrets the release has the source only: an APK signed with a throwaway key
       # could not update the previous one.
       - name: build the signed APK
-        if: env.SKIP != 'true'
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -75,13 +72,11 @@ jobs:
           cp android/build/lan-file-share.apk "dist/lan-file-share-$VERSION.apk"
 
       - name: write the checksums
-        if: env.SKIP != 'true'
         run: |
           (cd dist && sha256sum ./* > SHA256SUMS)
           cat dist/SHA256SUMS
 
       - name: create tag and release
-        if: env.SKIP != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

@@ -22,7 +22,7 @@ run_layer() {  # run_layer <name> <command...>
 run_layer "lint     (ruff)" "$PY" -m ruff check .
 run_layer "types    (mypy)" "$PY" -m mypy server tray tray_icon.py tests conftest.py
 if command -v shellcheck > /dev/null; then
-  run_layer "lint     (shellcheck)" shellcheck --severity=warning ./*.sh android/*.sh e2e/*.sh
+  run_layer "lint     (shellcheck)" shellcheck --severity=warning ./*.sh android/*.sh e2e/*.sh .github/scripts/*.sh
 else
   RESULTS+=("SKIP  lint (shellcheck) - sudo apt install shellcheck")
 fi
