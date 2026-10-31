@@ -7,10 +7,10 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-    "mypy==1.18.2",
-    "pytest==8.3.4",
-    "pytest-cov==6.0.0",
-    "ruff==0.16.4",
+    "mypy==2.4.0",
+    "pytest==9.2.0",
+    "pytest-cov==7.1.0",
+    "ruff==0.17.3",
 ]
 
 [tool.pytest.ini_options]
