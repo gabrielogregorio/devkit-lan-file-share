@@ -15,6 +15,7 @@ A server already on port 8908 is refused too: the emulator's broadcast would fin
 
 import hashlib
 import os
+import re
 import shutil
 import socket
 import subprocess
@@ -43,6 +44,8 @@ APK = ROOT / "android/build/lan-file-share.apk"
 OUT = ROOT / "e2e/out"
 MAESTRO = shutil.which("maestro") or str(Path.home() / ".maestro/maestro/bin/maestro")
 DOWNLOADS = "/sdcard/Download"
+SDK = Path(os.environ.get("ANDROID_HOME", Path.home() / "Android/Sdk"))
+LAST_EMULATOR_WITH_DISCOVERY = 36
 DOWNLOADS_URI = "content://com.android.externalstorage.documents/document/primary%3ADownload"
 
 
@@ -74,6 +77,14 @@ def refuse_real_server() -> None:
         if probe.connect_ex(("127.0.0.1", PORT)) == 0:
             sys.exit(f"refused: port {PORT} is in use. Turn off the LAN File Share icon first: "
                      "the emulator would find that server and pair with it.")
+
+
+def refuse_emulator_without_discovery() -> None:
+    properties = SDK / "emulator/source.properties"
+    revision = re.search(r"Pkg\.Revision=(\d+)", properties.read_text()) if properties.exists() else None
+    if revision and int(revision.group(1)) > LAST_EMULATOR_WITH_DISCOVERY:
+        sys.exit(f"refused: on emulator {revision.group(1)} the server's reply to a broadcast never gets back to "
+                 "the app, so discovery cannot pass. Install the build pinned in the README.")
 
 
 def refuse_other_devices() -> None:
@@ -165,7 +176,15 @@ def clear_app() -> None:
     adb("shell", f"pm grant {PACKAGE} android.permission.POST_NOTIFICATIONS")
 
 
+def wait_for_wifi() -> None:
+    """Without the emulator's Wi-Fi the broadcast never leaves, and it connects a while after boot."""
+    say("waiting for the emulator's Wi-Fi")
+    adb("shell", "svc wifi enable")
+    wait_for(lambda: "dev wlan0" in adb("shell", "ip route get 8.8.8.8", check=False), "the emulator's Wi-Fi", 180)
+
+
 def prepare_emulator() -> None:
+    wait_for_wifi()
     say("building the APK from the current code")
     subprocess.run(["android/build.sh"], cwd=ROOT, check=True, stdout=subprocess.DEVNULL)
     say("installing the APK")
@@ -251,6 +270,7 @@ STEPS: dict[str, Callable[[Pc], None]] = {
 
 
 def main() -> None:
+    refuse_emulator_without_discovery()
     refuse_other_devices()
     refuse_real_server()
     chosen = sys.argv[1:] or list(STEPS)

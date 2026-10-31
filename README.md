@@ -168,7 +168,9 @@ It needs the Android SDK from [android/README.md](android/README.md), the `emula
 and the system image below.
 
 ```bash
-sdkmanager "emulator" "system-images;android-34;google_apis;x86_64"
+sdkmanager "system-images;android-34;google_apis;x86_64"
+curl -fo emulator.zip https://dl.google.com/android/repository/emulator-linux_x64-15261927.zip    # 36.5.11
+unzip -o -q emulator.zip -d "$ANDROID_HOME"
 e2e/setup-maestro.sh    # once
 e2e/emulator.sh         # about 3 GB of RAM
 e2e/run.py              # about 4 minutes
