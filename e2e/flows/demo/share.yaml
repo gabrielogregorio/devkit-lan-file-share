@@ -1,0 +1,12 @@
+appId: com.android.documentsui
+---
+- extendedWaitUntil:
+    visible: ${FILE}
+    timeout: 30000
+- longPressOn: ${FILE}
+- tapOn:
+    text: "Share"
+- extendedWaitUntil:
+    visible: "LAN File Share"
+    timeout: 20000
+- tapOn: "LAN File Share"

@@ -1,0 +1,86 @@
+name: Tests Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Unit Tests (PC, app and JUnit against the real server)
+    timeout-minutes: 15
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - uses: ./.github/actions/setup-environment
+        with:
+          android: 'true'
+
+      - name: Run lint, types, pytest and JUnit
+        run: ./run-tests.sh
+
+      - name: The APK builds and its signature checks out
+        run: android/build.sh
+
+  e2e:
+    name: E2E Tests (real APK on an emulator, Maestro)
+    needs: unit
+    timeout-minutes: 30
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      # The runner has about 14 GB free, and the emulator's data partition does not fit on that.
+      - name: Free disk space
+        timeout-minutes: 5
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /usr/share/swift /usr/local/share/boost /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - uses: ./.github/actions/setup-environment
+        with:
+          android: 'true'
+
+      - name: Maestro, pinned by hash
+        timeout-minutes: 3
+        run: e2e/setup-maestro.sh
+
+      - name: Allow KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # CPU, memory and partition go on the command line: the action's fields end up below the ones of
+      # the device profile in config.ini, and are ignored. 3 cores out of 4: the software GPU, Maestro and
+      # the server need the fourth. A single line, because the action runs each line in its own shell.
+      - name: Emulator and flows
+        timeout-minutes: 20
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          avd-name: lan-file-share-api34
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -no-audio -no-boot-anim -no-metrics -cores 3 -memory 3072 -partition-size 3072
+          script: .venv/bin/python e2e/run.py
+
+      - name: Upload reports and screenshots
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: e2e-emulator
+          path: e2e/out/
+          if-no-files-found: ignore
+          retention-days: 14

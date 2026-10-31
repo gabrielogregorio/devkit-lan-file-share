@@ -1,0 +1,10 @@
+# What it tests: a pairing link opened from outside is declined in the dialog.
+# Why it matters: a planted link must not move the shares to another computer without the person agreeing.
+appId: com.devkit.lanfileshare
+---
+- openLink: ${PAIR_LINK}
+- tapOn:
+    id: "android:id/button2"
+- assertNotVisible:
+    id: ".*:id/status"
+    text: "Connected to .*"

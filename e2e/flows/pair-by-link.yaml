@@ -1,0 +1,15 @@
+# What it tests: the link in the QR code, opened from outside, asks first and then pairs.
+# Why it matters: any app can fire this link, and pairing must also rotate the key.
+appId: com.devkit.lanfileshare
+---
+- openLink: ${PAIR_LINK}
+- tapOn:
+    id: "android:id/button1"
+- extendedWaitUntil:
+    visible:
+      id: ".*:id/status"
+      text: "Connected to e2e-pc"
+    timeout: 30000
+- assertVisible:
+    id: ".*:id/detail"
+    text: ".*encrypted"

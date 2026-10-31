@@ -1,0 +1,59 @@
+[project]
+name = "devkit-lan-file-share"
+version = "0.1.0"
+description = "Share anything from an Android phone to a folder on the PC, over the local network"
+requires-python = "==3.12.*"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "mypy==1.18.2",
+    "pytest==8.3.4",
+    "pytest-cov==6.0.0",
+    "ruff==0.16.4",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["server", "tray", "tests"]
+python_files = ["*_test.py", "test_*.py"]
+addopts = "--cov=server --cov=tray --cov-report=term-missing:skip-covered --cov-fail-under=90"
+
+[tool.coverage.run]
+omit = ["*_test.py", "tray/panel.py", "tray/indicator.py", "server/main.py"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "UP", "N", "A", "T10", "S", "C4", "RET", "PIE"]
+ignore = [
+    "S101",    # assert is how pytest tests read
+    "S104",    # the server listens on every interface on purpose; verify_request keeps it on the LAN
+    "S603",    # every subprocess call has a fixed command
+    "S607",    # ss, xdg-open and notify-send come from the system PATH
+    "RET501",  # an explicit return closes the early-return branches
+    "RET502",
+    "RET503",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"*_test.py" = ["S105", "S106", "S108"]
+"tests/*" = ["S105", "S106", "S314"]
+"e2e/*" = ["S105", "S108"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+disallow_subclassing_any = false
+warn_unused_ignores = true
+exclude = ["^android/", "^e2e/out/", "^\\.venv/"]
+
+[[tool.mypy.overrides]]
+module = ["gi", "gi.*", "segno"]
+ignore_missing_imports = true
+
+[tool.uv]
+# "Virtual" project: only scripts, and uv manages the development tools. The runtime is the standard library.
+package = false

@@ -1,0 +1,56 @@
+name: Bug report
+description: A file did not arrive, the phone does not pair or the icon misbehaves
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Include what the app or the panel showed, and the request_id from the log when there is one.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Turn on the icon on the PC
+        2. Share a PDF from the Files app
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `cat VERSION`
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: phone
+    attributes:
+      label: Phone
+      placeholder: Android 15, Samsung S20 FE
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: PC
+      description: Distro and version, session type (X11 or Wayland)
+      placeholder: Ubuntu 24.04, X11
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Server log
+      description: Open it with View log in the icon menu. It holds no keys or passwords.
+      render: text

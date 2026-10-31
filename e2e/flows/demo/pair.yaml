@@ -1,0 +1,14 @@
+appId: com.devkit.lanfileshare
+---
+- openLink: ${PAIR_LINK}
+- extendedWaitUntil:
+    visible:
+      id: "android:id/button1"
+    timeout: 15000
+- tapOn:
+    id: "android:id/button1"
+- extendedWaitUntil:
+    visible:
+      id: ".*:id/status"
+      text: "Connected to my-pc"
+    timeout: 30000

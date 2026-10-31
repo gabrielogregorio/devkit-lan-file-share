@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">LAN File Share</string>
+    <string name="share_label">Send to PC</string>
+    <string name="tagline">Phone to PC, over your Wi-Fi</string>
+    <string name="state_connected">Connected to %1$s</string>
+    <string name="state_address">%1$s · encrypted</string>
+    <string name="state_searching">Looking for the PC…</string>
+    <string name="state_searching_sub">Turn on the icon on the PC</string>
+    <string name="state_offline">%1$s is out of reach</string>
+    <string name="state_offline_sub">Turn on the icon on the PC, on this Wi-Fi</string>
+    <string name="state_not_found">PC not found</string>
+    <string name="state_not_found_sub">Is the icon on, on the same Wi-Fi?</string>
+    <string name="state_wrong_password">Wrong password</string>
+    <string name="state_wrong_password_sub">Or the PC locked out after too many tries</string>
+    <string name="state_rejected">This PC does not know the password</string>
+    <string name="state_rejected_sub">Pairing refused</string>
+    <string name="state_error">Could not connect</string>
+    <string name="send">Send files</string>
+    <string name="scan">Scan QR code</string>
+    <string name="find">Find PC</string>
+    <string name="recent">Recent</string>
+    <string name="recent_empty">Nothing sent yet. In any app, tap Share and pick LAN File Share.</string>
+    <string name="connection">Connection</string>
+    <string name="password">Password</string>
+    <string name="host_hint">PC address (optional, e.g. 192.168.0.10)</string>
+    <string name="connect">Save and connect</string>
+    <string name="scan_hint">Point at the QR code on the PC panel</string>
+    <string name="scan_wrong">This QR code is not from LAN File Share</string>
+    <string name="scan_denied">Camera permission is needed to scan</string>
+    <string name="scan_no_camera">Could not open the camera</string>
+    <string name="confirm_title">Pair with this PC?</string>
+    <string name="confirm_body">%1$s will replace the PC paired today.</string>
+    <string name="confirm_body_first">Files shared from now on will go to %1$s.</string>
+    <string name="confirm_ok">Pair</string>
+    <string name="confirm_no">Cancel</string>
+    <string name="not_paired_toast">Pair with the PC first</string>
+    <string name="channel_progress">Transfers in progress</string>
+    <string name="channel_result">Finished transfers</string>
+    <string name="sending">Sending %1$s</string>
+    <string name="sending_count">File %1$d of %2$d</string>
+    <string name="done_one">Sent to PC: %1$s</string>
+    <string name="done_many">%1$d files sent to PC</string>
+    <string name="failed">Failed: %1$s</string>
+    <string name="failed_count">%1$d of %2$d files did not arrive</string>
+    <string name="error_offline">PC is off or not on this Wi-Fi</string>
+    <string name="error_password">wrong password</string>
+    <string name="error_disk">PC disk is almost full</string>
+    <string name="error_damaged">file arrived different from the original</string>
+    <string name="error_transfer">the transfer was cut off</string>
+    <string name="error_read">the sender did not allow reading this file</string>
+    <string name="error_nothing">nothing to send</string>
+    <string name="keys">Keys</string>
+    <string name="key_current">%1$s · current · %2$s</string>
+    <string name="key_old">%1$s · old · %2$s</string>
+</resources>
