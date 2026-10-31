@@ -1,0 +1,10 @@
+# What it tests: the app opens while the PC is off.
+# Why it matters: it must explain the situation instead of hanging or crashing.
+appId: com.devkit.lanfileshare
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: ".*:id/status"
+      text: "e2e-pc is out of reach"
+    timeout: 30000

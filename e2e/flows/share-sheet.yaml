@@ -1,0 +1,15 @@
+# What it tests: another app shares a real file through the Android share sheet and it reaches the PC.
+# Why it matters: this is the reason the app exists, and only here the sender grants the read permission.
+# The Files app is already open on Downloads (e2e/run.py).
+appId: com.android.documentsui
+---
+- extendedWaitUntil:
+    visible: ${FILE}
+    timeout: 30000
+- longPressOn: ${FILE}
+- tapOn:
+    text: "Share"
+- extendedWaitUntil:
+    visible: "LAN File Share"
+    timeout: 20000
+- tapOn: "LAN File Share"

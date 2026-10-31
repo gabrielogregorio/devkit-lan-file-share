@@ -1,0 +1,8 @@
+appId: com.devkit.lanfileshare
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: ".*:id/history_name"
+      text: ${FILE}
+    timeout: 30000

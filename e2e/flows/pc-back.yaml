@@ -1,0 +1,10 @@
+# What it tests: the PC came back, the same pairing works without doing anything.
+# Why it matters: turning the PC off and on is everyday use, not an error.
+appId: com.devkit.lanfileshare
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: ".*:id/status"
+      text: "Connected to e2e-pc"
+    timeout: 30000

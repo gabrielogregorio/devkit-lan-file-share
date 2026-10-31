@@ -1,0 +1,10 @@
+# What it tests: the keys were revoked and the password changed on the PC, then a share is sent.
+# Why it matters: a refused upload must be visible in the app, never silently lost.
+appId: com.devkit.lanfileshare
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: ".*:id/history_meta"
+      text: ".*wrong password.*"
+    timeout: 20000

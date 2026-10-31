@@ -1,0 +1,27 @@
+# What it tests: the Send files button, the system picker, and the result in Recent.
+# Why it matters: a big file exercises the foreground service, and the row is what the person sees.
+appId: com.devkit.lanfileshare
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: ".*:id/status"
+      text: "Connected to e2e-pc"
+    timeout: 20000
+- tapOn:
+    id: ".*:id/send"
+- extendedWaitUntil:
+    visible: "Show roots|Recent|Downloads"
+    timeout: 20000
+- runFlow:
+    when:
+      notVisible: ${FILE}
+    commands:
+      - tapOn: "Show roots"
+      - tapOn: "Downloads"
+- tapOn: ${FILE}
+- extendedWaitUntil:
+    visible:
+      id: ".*:id/history_name"
+      text: ${FILE}
+    timeout: 60000
