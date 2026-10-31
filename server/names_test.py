@@ -34,7 +34,7 @@ def test_accents_stay_and_control_characters_go() -> None:
 
 
 def test_right_to_left_override_is_removed() -> None:
-    assert sanitize_file_name("invoice‮fdp.exe") == "invoicefdp.exe"
+    assert sanitize_file_name("invoice\u202efdp.exe") == "invoicefdp.exe"
 
 
 def test_long_stem_is_cut_on_a_character_and_keeps_the_extension() -> None:

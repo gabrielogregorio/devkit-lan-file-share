@@ -1,5 +1,6 @@
 import re
 import subprocess
+import unicodedata
 import xml.etree.ElementTree as ElementTree
 from pathlib import Path
 
@@ -14,6 +15,7 @@ PLACEHOLDER = re.compile(r"%\d\$[sd]")
 FLOW_ID = re.compile(r'id: "\.\*:id/(\w{1,60})"')
 DECLARED_ID = re.compile(r'@\+id/(\w{1,60})')
 EM_DASH = chr(0x2014)
+HIDDEN_CHARACTER_CATEGORY = "Cf"
 SETTINGS_MODULE = "server/settings.py"
 
 
@@ -65,5 +67,13 @@ def test_only_the_settings_module_reads_the_environment() -> None:
 def test_no_em_dash_anywhere() -> None:
     offenders = [str(path.relative_to(ROOT)) for path in tracked_text_files()
                  if EM_DASH in path.read_text(encoding="utf-8", errors="ignore")]
+
+    assert offenders == []
+
+
+def test_no_hidden_unicode_anywhere() -> None:
+    offenders = [str(path.relative_to(ROOT)) for path in tracked_text_files()
+                 if any(unicodedata.category(character) == HIDDEN_CHARACTER_CATEGORY
+                        for character in path.read_text(encoding="utf-8", errors="ignore"))]
 
     assert offenders == []
