@@ -137,5 +137,6 @@ at 412 dp, in English and Portuguese, light and dark. `e2e/record_demos.py` rege
 
 ## 9. Release
 
-See `docs/release.md`. `VERSION` is the single source of the version; a PR into `main` that bumps it creates the tag
-`vX.Y.Z`. Tags always have the `v` prefix, so they never collide with a branch name.
+See `docs/release.md`. Only a PR of a `release/X.Y.Z` branch merged into `main` creates the tag `vX.Y.Z`, and `VERSION`
+must say the same. Any other PR merges without a version. Tags always have the `v` prefix, so they never collide with
+a branch name.

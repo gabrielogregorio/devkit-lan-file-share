@@ -1,13 +1,26 @@
 # Release
 
-`VERSION` is the single source of the version. It feeds the app's `versionName`, and `versionCode` is computed from it.
+A release comes only from a branch named `release/X.Y.Z`. Any other PR into `main` merges without a new version and
+publishes nothing, so day-to-day changes and Dependabot never have to touch `VERSION`.
 
-1. Work on `dev`, in commits of one line in English.
-2. Open a PR from `dev` to `main`, bumping `VERSION`. `auto-complete-fields.yml` refuses a version already released,
-   assigns the author, adds labels, lists the commits where the template has `[...autoGenerate]` and sets the title to
-   `Release vX.Y.Z - ...`.
-3. On merge, `create-tag-and-release.yml` creates the tag `vX.Y.Z` and the GitHub release, with the source tarball and
-   `SHA256SUMS`. Tags always have the `v` prefix, so they never collide with a branch name.
+`VERSION` feeds the app's `versionName`, and `versionCode` is computed from it, so on a release branch it must say the
+same as the branch name.
+
+1. Work on `dev`, in commits of one line in English, and merge into `main` through PRs as often as you like.
+2. To release, branch off `dev` and set the version:
+
+   ```bash
+   git switch -c release/1.2.3 dev
+   echo 1.2.3 > VERSION
+   git commit -am "Release 1.2.3"
+   git push origin release/1.2.3
+   ```
+
+3. Open a PR from `release/1.2.3` to `main`. `auto-complete-fields.yml` refuses a badly named branch, a branch that
+   disagrees with `VERSION` and a version already released, and sets the title to `Release v1.2.3 - ...`. Every PR gets
+   the author, the labels and the commit list where the template has `[...autoGenerate]`.
+4. On merge, `create-tag-and-release.yml` runs the same checks and creates the tag `v1.2.3` and the GitHub release, with
+   the source tarball and `SHA256SUMS`. Tags always have the `v` prefix, so they never collide with a branch name.
 
 ## Signed APK
 

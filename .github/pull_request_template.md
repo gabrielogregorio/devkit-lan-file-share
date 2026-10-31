@@ -8,7 +8,7 @@
 
 ## Checklist
 
-- [ ] `VERSION` bumped (merging into `main` creates the tag `vX.Y.Z` and the release)
+- [ ] Release? The branch is `release/X.Y.Z` and `VERSION` says the same (no other PR needs a version)
 - [ ] `./run-tests.sh` ends with `ALL GREEN`
 - [ ] `RUN_E2E=1 ./run-tests.sh` passed when a screen, a flow or the protocol changed
 - [ ] New panel text is English inside `tr()` with its line in `PT_BR` in `tray/i18n.py`

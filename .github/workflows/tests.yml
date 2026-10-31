@@ -72,6 +72,8 @@ jobs:
           arch: x86_64
           profile: pixel_6
           avd-name: lan-file-share-api34
+          # 36.5.11: from 37 on the reply to a broadcast never gets back to the app, see docs/adr/0006
+          emulator-build: 15261927
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -no-audio -no-boot-anim -no-metrics -cores 3 -memory 3072 -partition-size 3072
           script: .venv/bin/python e2e/run.py
