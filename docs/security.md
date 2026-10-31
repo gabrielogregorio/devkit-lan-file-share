@@ -14,6 +14,13 @@
 | Planted links | A pairing link from outside needs confirmation, so another app cannot redirect the shares |
 | Planted shares | Only `content://` is accepted: a `file://` link could point at the app's own private files |
 
+## Why it listens on every interface
+
+The server binds `0.0.0.0`. Measured on Linux, a UDP socket bound to the LAN address does not receive a
+`255.255.255.255` broadcast, so discovery would stop working, and `127.0.0.1` would cut the phone off. The limit is
+per peer instead, in the "Reach" row above. CodeQL's `py/bind-socket-all-network-interfaces` is excluded for this
+reason in `.github/codeql/codeql-config.yml`.
+
 ## Received files
 
 Whatever arrives is data, and the content is not inspected: this is a file drop between your own devices.

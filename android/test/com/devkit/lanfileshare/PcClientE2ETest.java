@@ -17,6 +17,8 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Proxy;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -24,6 +26,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -31,6 +35,8 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
 
 /** The app's real network code against the real server in its own process, on a throwaway config. */
 public class PcClientE2ETest {
@@ -164,6 +170,28 @@ public class PcClientE2ETest {
         impostor.port = pc.port;
         impostor.fingerprint = "00".repeat(32);
         assertThrows(SSLException.class, () -> PcClient.hello(impostor, PASSWORD));
+    }
+
+    private static SSLSession sessionWith(Certificate[] certificates) {
+        return (SSLSession) Proxy.newProxyInstance(SSLSession.class.getClassLoader(), new Class<?>[]{SSLSession.class},
+                (proxy, method, arguments) -> {
+                    if (certificates == null) {
+                        throw new SSLPeerUnverifiedException("no certificate");
+                    }
+
+                    return certificates;
+                });
+    }
+
+    @Test
+    public void hostnameCheckAcceptsOnlyThePinnedCertificate() throws Exception {
+        try (InputStream file = Files.newInputStream(config.resolve("cert.pem"))) {
+            Certificate[] certificates = {CertificateFactory.getInstance("X.509").generateCertificate(file)};
+
+            assertTrue(PcClient.presentsPin(sessionWith(certificates), pc.fingerprint));
+            assertFalse(PcClient.presentsPin(sessionWith(certificates), "00".repeat(32)));
+        }
+        assertFalse(PcClient.presentsPin(sessionWith(null), pc.fingerprint));
     }
 
     @Test

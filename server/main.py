@@ -10,6 +10,7 @@ from server.http_api import FileShareServer
 from server.settings import SETTINGS
 from server.storage import remove_leftovers
 
+# A UDP socket on one address never gets the discovery broadcast; network.py limits who is served.
 LISTEN_ADDRESS = "0.0.0.0"
 
 logger = logging.getLogger(__name__)

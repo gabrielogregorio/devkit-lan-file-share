@@ -19,6 +19,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
@@ -26,6 +27,8 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
@@ -92,7 +95,7 @@ final class PcClient {
     private PcClient() {
     }
 
-    private static String fingerprintOf(X509Certificate certificate) throws CertificateException {
+    private static String fingerprintOf(Certificate certificate) throws CertificateException {
         try {
             return Protocol.hex(MessageDigest.getInstance("SHA-256").digest(certificate.getEncoded()));
         } catch (GeneralSecurityException error) {
@@ -134,11 +137,20 @@ final class PcClient {
         }
     }
 
+    /** A LAN certificate has no meaningful name, so the hostname check is the pin again. */
+    static boolean presentsPin(SSLSession session, String pinned) {
+        try {
+            return fingerprintOf(session.getPeerCertificates()[0]).equals(pinned);
+        } catch (SSLPeerUnverifiedException | CertificateException error) {
+            return false;
+        }
+    }
+
     private static HttpsURLConnection open(Pc pc, String path) throws IOException {
         URL url = new URL("https", pc.host, pc.port, path);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setSSLSocketFactory(tls(pc.fingerprint, null));
-        connection.setHostnameVerifier((host, session) -> true); // identity is the pin, not the name
+        connection.setHostnameVerifier((host, session) -> presentsPin(session, pc.fingerprint));
         connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
         connection.setReadTimeout(READ_TIMEOUT_MS);
 

@@ -1,0 +1,6 @@
+name: lan file share
+
+# The server must listen on the LAN; see "Why it listens on every interface" in docs/security.md.
+query-filters:
+  - exclude:
+      id: py/bind-socket-all-network-interfaces
