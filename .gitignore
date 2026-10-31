@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+*.pem
+*.log
+*.keystore
+android/build/
+android/libs/
+e2e/out/
+dist/
+tmp/
