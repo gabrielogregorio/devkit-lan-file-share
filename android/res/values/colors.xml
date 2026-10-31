@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#F3F6FA</color>
+    <color name="card">#FFFFFF</color>
+    <color name="text">#0F1B2D</color>
+    <color name="muted">#5E6C80</color>
+    <color name="line">#E2E8F0</color>
+    <color name="brand">#2F80ED</color>
+    <color name="brand2">#14B8A6</color>
+    <color name="good">#16A34A</color>
+    <color name="warn">#F59E0B</color>
+    <color name="bad">#DC2626</color>
+    <color name="tile">#E8F1FD</color>
+</resources>
