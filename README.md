@@ -207,7 +207,7 @@ Five workflows, with every action pinned to a commit hash:
 | Workflow | When | What it does |
 | --- | --- | --- |
 | `tests.yml` | Push and PR to `main` | Lint, types, pytest, JUnit, the APK build, then the emulator E2E on KVM |
-| `check-quality.yml` | Push and PR to `main` | Ruff, mypy, ShellCheck, executable scripts, pinned actions, valid YAML, lock and requirements agreeing |
+| `check-quality.yml` | Push and PR to `main` | Ruff, mypy, ShellCheck, executable scripts, pinned actions, valid YAML, lock and requirements agreeing; on PRs only, dependency audit with pip-audit |
 | `codeql-analysis.yml` | Push, PR and weekly | Security analysis of Python, Java and the workflows |
 | `auto-complete-fields.yml` | PR to `main` | Validates a release branch, assigns, labels, lists the commits, sets the title |
 | `create-tag-and-release.yml` | PR of `release/X.Y.Z` merged into `main` | Creates the tag and the release, with checksums, see [docs/release.md](docs/release.md) |

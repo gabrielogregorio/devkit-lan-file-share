@@ -56,3 +56,14 @@ jobs:
           different = {name: version for name, version in exported.items() if locked.get(name) != version}
           raise SystemExit(f"requirements-dev.txt differs from uv.lock: {different}" if different else 0)
           PY
+
+  audit:
+    name: Audit dependencies (pip-audit)
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 5
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Python packages (versions from requirements-dev.txt)
+        run: pipx run pip-audit==2.10.1 --no-deps --disable-pip -r requirements-dev.txt
